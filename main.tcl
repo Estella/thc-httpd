@@ -96,34 +96,41 @@ proc readreq {chan addr} {
 		set env(SERVER_SOFTWARE) "tclhttpd/0.1"
 		set url [lindex [split $urls($chan) "?"] 0]
 		set cgiparm [lindex [split $urls($chan) "?"] 1]
-		if {[regexp $::config::main(phpregex) $url ->]} {
-			set env(QUERY_STRING) $cgiparm
-			set env(DOCUMENT_ROOT) $filepfx($chan)
-			set env(REQUEST_METHOD) $qtypes($chan)
-			set env(REDIRECT_STATUS) 1
-			set env(SCRIPT_FILENAME) "$filepfx($chan)${url}"
-			
-			set fromc [open "|$::config::main(phppath) $filepfx($chan)${url}"]
-			if {[info exists postdata($chan)]} {puts $fromc $postdata($chan)}
-			puts $chan "HTTP/1.1 200 Attempting to send results of script"
-			puts $chan "Content-Type: text/html"
-			sendfromchan $chan $fromc
-			close $chan
-			unset env(QUERY_STRING)
-			unset env(DOCUMENT_ROOT)
-			unset env(REQUEST_METHOD)
-			unset filepfx($chan)
-			unset qtypes($chan)
-			catch {unset postdata($chan)}
-			flush $chan
-		} {
+		set iscgi 0
+		foreach {reg prog} {
+			if {[regexp $reg $url ->]} {
+				set env(QUERY_STRING) $cgiparm
+				set env(DOCUMENT_ROOT) $filepfx($chan)
+				set env(REQUEST_METHOD) $qtypes($chan)
+				set env(REDIRECT_STATUS) 1
+				set env(SCRIPT_FILENAME) "$filepfx($chan)${url}"
+				
+				set fromc [open "|$prog $filepfx($chan)${url}"]
+				if {[info exists postdata($chan)]} {puts $fromc $postdata($chan)}
+				puts $chan "HTTP/1.1 200 Attempting to send results of script"
+				puts $chan "Content-Type: text/html"
+				sendfromchan $chan $fromc
+				close $chan
+				unset env(QUERY_STRING)
+				unset env(DOCUMENT_ROOT)
+				unset env(REQUEST_METHOD)
+				unset filepfx($chan)
+				unset qtypes($chan)
+				catch {unset postdata($chan)}
+				flush $chan
+				set iscgi 1
+			}
+		}
+		if {!$iscgi} {
 			puts $chan "HTTP/1.1 200 Attempting to send file"
 			puts $chan "Content-Type: text/html\r\n"
 			sendfile $chan "$filepfx($chan)${url}"
 			close $chan
 		}
-	}	
-}
+	}
+}	
+
+
 
 proc acceptconn {chan addr port} {
 	global waiting
