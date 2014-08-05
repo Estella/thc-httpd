@@ -115,6 +115,7 @@ proc readreq {chan addr} {
 				unset env(DOCUMENT_ROOT)
 				unset env(REQUEST_METHOD)
 				unset env(REMOTE_ADDR)
+				unset env(SCRIPT_FILENAME)
 				unset filepfx($chan)
 				unset qtypes($chan)
 				catch {unset postdata($chan)}
