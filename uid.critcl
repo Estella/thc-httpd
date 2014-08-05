@@ -1,0 +1,55 @@
+package require critcl
+package provide uid 1.0
+
+if {![critcl::compiling]} {
+    puts stderr "This extension cannot be compiled without critcl enabled"
+    exit 1
+}
+
+critcl::ccode {
+    #include <sys/types.h>
+    #include <unistd.h>
+    #include <pwd.h>
+}
+
+critcl::cproc setusergroup {char* name} int {
+    struct passwd *pwd = getpwnam(name);
+    if (pwd == NULL) {
+            return 0;
+    }
+    initgroups(name,pwd->pw_gid);
+    setgid(pwd->pw_gid);
+    setuid(pwd->pw_uid);
+    return 1;
+}
+
+critcl::cproc setuid {char* name} int {
+    struct passwd *pwd = getpwnam(name);
+    if (pwd == NULL) {
+        return 0;
+    }
+    setuid(pwd->pw_uid);
+    return 1;
+}
+
+critcl::cproc seteuid {char* name} int {
+    struct passwd *pwd = getpwnam(name);
+    if (pwd == NULL) {
+        return 0;
+    }
+    seteuid(pwd->pw_uid);
+    return 1;
+}
+
+critcl::cproc getuid {} int {
+    return getuid();
+}
+
+critcl::cproc geteuid {} int {
+    return geteuid();
+}
+
+critcl::cproc setsid {} int {
+    return setsid();
+}
+

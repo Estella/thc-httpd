@@ -1,6 +1,8 @@
 #!/usr/bin/env tcl
 
+lappend auto_path "[pwd]/lib"
 package require fileutil
+package require uid
 
 namespace eval config {
 	array set main {}
@@ -147,4 +149,7 @@ foreach {host port} $::config::main(port) {
 	socket -server acceptconn -myaddr $host $port
 }
 
+if {![setusergroup jack]} {die "Fucking CANNOT RUN AS ROOT!"}
+puts [getuid]
+puts [geteuid]
 vwait forever
