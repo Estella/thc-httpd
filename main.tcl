@@ -102,6 +102,7 @@ proc readreq {chan addr} {
 				set env(QUERY_STRING) $cgiparm
 				set env(DOCUMENT_ROOT) $filepfx($chan)
 				set env(REQUEST_METHOD) $qtypes($chan)
+				set env(REMOTE_ADDR) $addr
 				set env(REDIRECT_STATUS) 1
 				set env(SCRIPT_FILENAME) "$filepfx($chan)${url}"
 				
@@ -113,6 +114,7 @@ proc readreq {chan addr} {
 				unset env(QUERY_STRING)
 				unset env(DOCUMENT_ROOT)
 				unset env(REQUEST_METHOD)
+				unset env(REMOTE_ADDR)
 				unset filepfx($chan)
 				unset qtypes($chan)
 				catch {unset postdata($chan)}
