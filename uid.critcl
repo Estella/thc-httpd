@@ -1,6 +1,8 @@
 package require critcl
 package provide uid 1.0
 
+## dkf@tclers wiki
+
 if {![critcl::compiling]} {
     puts stderr "This extension cannot be compiled without critcl enabled"
     exit 1
