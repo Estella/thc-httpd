@@ -97,7 +97,7 @@ proc readreq {chan addr} {
 		set url [lindex [split $urls($chan) "?"] 0]
 		set cgiparm [lindex [split $urls($chan) "?"] 1]
 		set iscgi 0
-		foreach {reg prog} {
+		foreach {reg prog} $::config::main(cgi) {
 			if {[regexp $reg $url ->]} {
 				set env(QUERY_STRING) $cgiparm
 				set env(DOCUMENT_ROOT) $filepfx($chan)
@@ -108,7 +108,6 @@ proc readreq {chan addr} {
 				set fromc [open "|$prog $filepfx($chan)${url}"]
 				if {[info exists postdata($chan)]} {puts $fromc $postdata($chan)}
 				puts $chan "HTTP/1.1 200 Attempting to send results of script"
-				puts $chan "Content-Type: text/html"
 				sendfromchan $chan $fromc
 				close $chan
 				unset env(QUERY_STRING)
@@ -117,7 +116,6 @@ proc readreq {chan addr} {
 				unset filepfx($chan)
 				unset qtypes($chan)
 				catch {unset postdata($chan)}
-				flush $chan
 				set iscgi 1
 			}
 		}
