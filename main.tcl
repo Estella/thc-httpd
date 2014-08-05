@@ -97,6 +97,9 @@ proc readreq {chan addr} {
 		set url [lindex [split $urls($chan) "?"] 0]
 		set cgiparm [lindex [split $urls($chan) "?"] 1]
 		set iscgi 0
+		if {$url == "/"} {
+			set url $::config::main(index)
+		}
 		foreach {reg prog} $::config::main(cgi) {
 			if {[regexp $reg $url ->]} {
 				set env(QUERY_STRING) $cgiparm
