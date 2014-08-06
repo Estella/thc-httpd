@@ -76,12 +76,13 @@ array set qtypes {}
 array set qvers {}
 array set postdata {}
 array set filepfx {}
+array set nonl {}
 
 proc readreq {chan addr} {
-	global waiting header env urls qtypes postdata filepfx qvers
+	global waiting header env urls qtypes postdata filepfx qvers nonl
 	set msg [string trim [gets $chan] "\r\n"]
-	if {[info exists qtypes($chan)]} {
-		if {$qtypes($chan) == "post"} {
+	if {[info exists qtypes($chan)] && [info exists nonl($chan)]} {
+		if {$qtypes($chan) == "post" && $nonl($chan) == 1} {
 			append postdata($chan) $msg
 			append postdata($chan) "\r\n"
 		}
@@ -110,9 +111,20 @@ proc readreq {chan addr} {
 			set waiting($chan) 0
 		}
 	} {
-		if {$msg == "" && [info exists qtypes($chan)]} {
+		if {$msg == "" && [info exists qtypes($chan)] && [string tolower $qtypes($chan)] != "post"} {
 			set waiting($chan) 0
 		}
+		if {$nonl($chan) == 2 && [info exists qtypes($chan)]} {
+			if {[string tolower $qtypes($chan)] == "post"} {
+				set waiting($chan) 0
+			}
+		}
+	}
+	if {![info exists nonl($chan)] && $msg == ""} {
+		set nonl($chan) 1
+	}
+	if {[info exists nonl($chan)] && $msg == ""} {
+		incr nonl($chan)
 	}
 	if {!$waiting($chan)} {
 		set env(SERVER_SOFTWARE) "tclhttpd/0.1"
