@@ -144,7 +144,7 @@ proc readreq {chan addr msg} {
 				set env(REDIRECT_STATUS) 1
 				if {[dict exists headers($chan) content-length]} {set env(CONTENT_LENGTH) [dict get headers($chan) content-length]}
 				if {[dict exists headers($chan) content-type]} {set env(CONTENT_TYPE) [dict get headers($chan) content-type]}
-				set env(SCRIPT_FILENAME) "$filepfx($chan)${url}"
+				set env(SCRIPT_FILENAME) $filepfx($chan)${url}
 				if {[dict exists headers($chan) cookie]} {set env(HTTP_COOKIE) [dict get headers($chan) cookie]}
 
 				set fromc [open |[list $prog $filepfx($chan)${url}] r+]
