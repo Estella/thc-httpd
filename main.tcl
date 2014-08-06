@@ -41,7 +41,7 @@ source httpd.conf
 trap rehash SIGUSR1
 
 set pfile [open "./httpd.pid" w]
-puts $pfile [pid]
+puts -nonewline $pfile [pid]
 puts [pid]
 close $pfile
 
@@ -134,7 +134,7 @@ proc readreq {chan addr} {
 
 				set fromc [open "|$prog $filepfx($chan)${url}"]
 				if {[info exists postdata($chan)]} {puts $fromc $postdata($chan)}
-				puts $chan "HTTP/1.1 200 Attempting to send results of script\r\n"
+				puts -nonewline $chan "HTTP/1.1 200 Attempting to send results of script\r\n"
 				sendfromchan $chan $fromc
 				close $chan
 				unset env(QUERY_STRING)
@@ -149,8 +149,8 @@ proc readreq {chan addr} {
 			}
 		}
 		if {!$iscgi} {
-			puts $chan "HTTP/1.1 200 Attempting to send file\r\n"
-			puts $chan "Content-Type: [::fileutil::magic::mimetype $filepfx($chan)${url}]\r\n\r\n"
+			puts -nonewline $chan "HTTP/1.1 200 Attempting to send file\r\n"
+			puts -nonewline $chan "Content-Type: [::fileutil::magic::mimetype $filepfx($chan)${url}]\r\n\r\n"
 			sendfile $chan "$filepfx($chan)${url}"
 			close $chan
 		}
