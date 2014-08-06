@@ -81,13 +81,6 @@ array set nonl {}
 proc readreq {chan addr} {
 	global waiting header env urls qtypes postdata filepfx qvers nonl
 	set msg [string trim [gets $chan] "\r\n"]
-	if {[info exists qtypes($chan)] && [info exists nonl($chan)]} {
-		if {$qtypes($chan) == "POST" && $nonl($chan) == 1} {
-			puts stdout $msg
-			append postdata($chan) $msg
-			append postdata($chan) "\n"
-		}
-	}
 	set qtype [lindex $msg 0]
 	switch -regexp $qtype {
 		"POST" {set qtypes($chan) $qtype;set qvers($chan) [lindex $msg 2];set urls($chan) [lindex $msg 1]}
@@ -110,7 +103,7 @@ proc readreq {chan addr} {
 		set filepfx($chan) [dict get $::config::main(root) default]
 	}
 	if {![info exists nonl($chan)] && $msg == ""} {
-		set nonl($chan) 1
+		set nonl($chan) 0
 	}
 	if {[info exists nonl($chan)] && $msg == ""} {
 		incr nonl($chan)
