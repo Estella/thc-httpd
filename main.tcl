@@ -177,7 +177,7 @@ proc acceptconn {chan addr port} {
 	fconfigure $chan -blocking 0 -buffering none -encoding binary -translation {binary binary}
 	set waiting($chan) 1
 	set postdata($chan) ""
-	fileevent $chan readable [list readreq $chan $addr]
+	fileevent $chan readable [list readrreq $chan $addr]
 }
 
 proc sacceptconn {chan addr port} {
