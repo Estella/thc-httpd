@@ -52,9 +52,10 @@ proc rehash {} {
 proc sendfile {tochan filename} {
 	set fp [open $filename r]
 	fconfigure $fp -encoding binary
-	while {![eof $fp]} {
-		puts -nonewline $tochan [read $fp 4096]
-	}
+        for {set x 0} {![eof $fp]} {incr x} {
+                puts $tochan [read $fp 512]
+                flush $tochan
+        }
 	close $fp
 }
 
