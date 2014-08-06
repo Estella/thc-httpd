@@ -93,6 +93,7 @@ proc readreq {chan addr} {
 		"post" {set qtypes($chan) $qtype;set qvers($chan) [lindex $msg 2];set urls($chan) [lindex $msg 1]}
 		"get" {set qtypes($chan) $qtype;set qvers($chan) [lindex $msg 2];set urls($chan) [lindex $msg 1]}
 		".*:" {dict set header($chan) [string tolower [string trim [lindex $msg 0] ":"]] [lindex $msg 1]}
+		"..*" {if {"post"==$qtypes($chan)} {append postdata "$msg\r\n"}}
 	}
 	if {[info exists header($chan)]} {
 	foreach {k v} $header($chan) {
