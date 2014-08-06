@@ -86,7 +86,7 @@ proc readreq {chan addr} {
 	switch -regexp -nocase $qtype {
 		"post" {set qtypes($chan) $qtype;set qvers($chan) [lindex $msg 2];set urls($chan) [lindex $msg 1]}
 		"get" {set qtypes($chan) $qtype;set qvers($chan) [lindex $msg 2];set urls($chan) [lindex $msg 1]}
-		".*:" {dict set header($chan) [strtolower [string trim [lindex $msg 0] ":"]] [lindex $msg 1]}
+		".*:" {dict set header($chan) [string tolower [string trim [lindex $msg 0] ":"]] [lindex $msg 1]}
 	}
 	if {[info exists header($chan)]} {
 	foreach {k v} $header($chan) {
