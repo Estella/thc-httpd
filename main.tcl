@@ -81,11 +81,11 @@ array set nonl {}
 proc readreq {chan addr} {
 	global waiting header env urls qtypes postdata filepfx qvers nonl
 	set msg [string trim [gets $chan] "\r\n"]
-	puts stdout $msg
 	if {[info exists qtypes($chan)] && [info exists nonl($chan)]} {
 		if {$qtypes($chan) == "post" && $nonl($chan) == 1} {
+			puts stdout $msg
 			append postdata($chan) $msg
-			append postdata($chan) "\r\n"
+			append postdata($chan) "\n"
 		}
 	}
 	set qtype [lindex $msg 0]
