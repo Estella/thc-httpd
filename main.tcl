@@ -108,7 +108,7 @@ proc readreq {chan addr} {
 	if {[info exists nonl($chan)] && $msg == ""} {
 		incr nonl($chan)
 	}
-	if {[info exists nonl($chan)]} {
+	if {[info exists nonl($chan)] && [info exists qtypes($chan)]} {
 		if {$nonl($chan) == 2} {
 			set waiting($chan) 0
 		}
