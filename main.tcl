@@ -1,7 +1,7 @@
 #!/usr/bin/env tcl
 
 lappend auto_path "[pwd]/lib"
-package require fileutil
+package require fileutil::magic::mimetype
 package require uid
 package require Expect
 package require tls
