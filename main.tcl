@@ -164,13 +164,23 @@ proc acceptconn {chan addr port} {
 	fileevent $chan readable [list readreq $chan $addr]
 }
 
+proc sacceptconn {chan addr port} {
+	global waiting
+	fconfigure $chan -blocking 1 -buffering line
+	::tls::handshake $chan
+	fconfigure $chan -blocking 0 -buffering line
+
+	set waiting($chan) 1
+	fileevent $chan readable [list readreq $chan $addr]
+}
+
 foreach {host port} $::config::main(port) {
 	socket -server acceptconn -myaddr $host $port
 }
 
 if {[info exists ::config::main(sslport)]} {
 	foreach {host port} $::config::main(sslport) {
-		::tls::socket -certfile httpd.pem -server acceptconn -myaddr $host $port
+		::tls::socket -certfile httpd.pem -server sacceptconn -myaddr $host $port
 	}
 }
 
