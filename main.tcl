@@ -120,7 +120,7 @@ proc readreq {chan addr msg} {
 		if {$nonl($chan) == 2} {
 			set waiting($chan) 0
 		}
-		if {$nonl($chan) == 1 && ($qtypes($chan) != "POST")} {
+		if {$nonl($chan) == 1 && ![string match -nocase "*POST*" $qtypes($chan)]} {
 			set waiting($chan) 0
 		}
 	}
@@ -153,8 +153,8 @@ proc readreq {chan addr msg} {
 				unset env(DOCUMENT_ROOT)
 				unset env(REQUEST_METHOD)
 				unset env(REMOTE_ADDR)
-				if {[dict exists headers($chan) content-length]} unset env(CONTENT_LENGTH)
-				if {[dict exists headers($chan) content-type]} unset env(CONTENT_TYPE)
+				if {[dict exists headers($chan) content-length]} {unset env(CONTENT_LENGTH)}
+				if {[dict exists headers($chan) content-type]} {unset env(CONTENT_TYPE)}
 				unset env(SCRIPT_FILENAME)
 				unset filepfx($chan)
 				unset qtypes($chan)
