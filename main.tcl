@@ -95,8 +95,8 @@ proc readreq {chan addr msg} {
 		".*:" {dict set header($chan) [string tolower [string trim [lindex $msg 0] ":"]] [lindex $msg 1]}
 	}
 	#if {"post"==$qtypes($chan) && $qtype != "post" && $qtype != "get"} {append postdata($chan) "$msg\r\n"}
-	if {[info exists qtypes($chan)]} {if {"POST"==$qtypes($chan)} {puts stdout $msg}}
-	if {[info exists qtypes($chan)] && [info exists nonl($chan)]} {if {"POST"==$qtypes($chan) && $nonl($chan) == 1} {append postdata($chan) $msg;append postdata($chan) "\r\n";puts stdout $msg}}
+	#if {[info exists qtypes($chan)]} {if {"POST"==$qtypes($chan)} {puts stdout $msg}}
+	if {[info exists qtypes($chan)] && [info exists nonl($chan)]} {if {"POST"==$qtypes($chan) && $nonl($chan) == 1} {append postdata($chan) $msg;append postdata($chan) "\r\n";puts stdout $msg;set waiting($chan) 0}}
 	if {[info exists header($chan)]} {
 	if {![info exists filepfx($chan)]} {
 	foreach {k v} $header($chan) {
