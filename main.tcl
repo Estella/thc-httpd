@@ -179,8 +179,9 @@ foreach {host port} $::config::main(port) {
 }
 
 if {[info exists ::config::main(sslport)]} {
+	::tls::init -require 0 -request 0 -certfile httpd.pem -keyfile httpd.pem
 	foreach {host port} $::config::main(sslport) {
-		::tls::socket -require 0 -request 0 -certfile httpd.pem -server sacceptconn -tls1 1 -myaddr $host $port
+		::tls::socket -server sacceptconn -myaddr $host $port
 	}
 }
 
