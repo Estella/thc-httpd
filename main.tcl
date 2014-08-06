@@ -51,10 +51,7 @@ proc rehash {} {
 
 proc sendfile {tochan filename} {
 	set fp [open $filename r]
-	for {set x 0} {![eof $fp]} {incr x} {
-		puts $tochan [string trim [gets $fp] "\r\n"]
-		flush $tochan
-	}
+	chan copy $fp $tochan
 	close $fp
 }
 
@@ -90,7 +87,7 @@ proc readreq {chan addr} {
 	switch -regexp -nocase $qtype {
 		"post" {set qtypes($chan) $qtype;set qvers($chan) [lindex $msg 2];set urls($chan) [lindex $msg 1]}
 		"get" {set qtypes($chan) $qtype;set qvers($chan) [lindex $msg 2];set urls($chan) [lindex $msg 1]}
-		".*:" {dict set header($chan) [string trim [lindex $msg 0] ":"] [lindex $msg 1]}
+		".*:" {dict set header($chan) [strtolower [string trim [lindex $msg 0] ":"]] [lindex $msg 1]}
 	}
 	if {[info exists header($chan)]} {
 	foreach {k v} $header($chan) {
@@ -130,7 +127,8 @@ proc readreq {chan addr} {
 				set env(REMOTE_ADDR) $addr
 				set env(REDIRECT_STATUS) 1
 				set env(SCRIPT_FILENAME) "$filepfx($chan)${url}"
-				
+				if {[dict exists headers($chan) cookie]} {set env(HTTP_COOKIE) [dict get headers($chan) cookie]}
+
 				set fromc [open "|$prog $filepfx($chan)${url}"]
 				if {[info exists postdata($chan)]} {puts $fromc $postdata($chan)}
 				puts $chan "HTTP/1.1 200 Attempting to send results of script"
@@ -160,7 +158,7 @@ proc readreq {chan addr} {
 
 proc acceptconn {chan addr port} {
 	global waiting
-	fconfigure $chan -blocking 0 -buffering line
+	fconfigure $chan -blocking 0 -buffering line -translation {binary binary}
 	set waiting($chan) 1
 	fileevent $chan readable [list readreq $chan $addr]
 }
@@ -169,7 +167,7 @@ proc sacceptconn {chan addr port} {
 	global waiting
 	fconfigure $chan -blocking 1 -buffering line
 	::tls::handshake $chan
-	fconfigure $chan -blocking 0 -buffering line
+	fconfigure $chan -blocking 0 -buffering line -translation {binary binary}
 
 	set waiting($chan) 1
 	fileevent $chan readable [list readreq $chan $addr]
