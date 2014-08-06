@@ -3,6 +3,7 @@
 lappend auto_path "[pwd]/lib"
 package require fileutil
 package require uid
+package require Expect
 
 namespace eval config {
 	array set main {}
@@ -35,6 +36,17 @@ source httpd.conf
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #  
+
+trap rehash SIGUSR1
+
+set pfile [open "./httpd.pid" w]
+puts $pfile [pid]
+puts [pid]
+close $pfile
+
+proc rehash {} {
+	uplevel "1" source httpd.conf
+}
 
 proc sendfile {tochan filename} {
 	set fp [open $filename r]
