@@ -4,6 +4,7 @@ lappend auto_path "[pwd]/lib"
 package require fileutil
 package require uid
 package require Expect
+package require tls
 
 namespace eval config {
 	array set main {}
@@ -162,7 +163,6 @@ foreach {host port} $::config::main(port) {
 }
 
 if {[info exists ::config::main(sslport)]} {
-uplevel "1" package require tls
 	foreach {host port} $::config::main(sslport) {
 		::tls::socket -certfile httpd.pem -server acceptconn -myaddr $host $port
 	}
