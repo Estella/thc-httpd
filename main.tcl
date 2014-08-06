@@ -51,7 +51,10 @@ proc rehash {} {
 
 proc sendfile {tochan filename} {
 	set fp [open $filename r]
-	chan copy $fp $tochan
+	fconfigure $fp -encoding binary
+	while {![eof $fp]} {
+		puts -nonewline $tochan [read $fp 4096]
+	}
 	close $fp
 }
 
