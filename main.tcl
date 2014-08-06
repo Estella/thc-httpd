@@ -155,9 +155,7 @@ proc readreq {chan addr} {
 			close $chan
 		}
 	}
-}	
-
-
+}
 
 proc acceptconn {chan addr port} {
 	global waiting
