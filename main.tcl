@@ -161,6 +161,13 @@ foreach {host port} $::config::main(port) {
 	socket -server acceptconn -myaddr $host $port
 }
 
+if {[info exists ::config::main(sslport)]} {
+uplevel "1" package require tls
+	foreach {host port} $::config::main(sslport) {
+		::tls::socket -certfile httpd.pem -server acceptconn -myaddr $host $port
+	}
+}
+
 if {![setusergroup $::config::main(runas)]} {die "Fucking CANNOT RUN AS ROOT!"}
 puts [getuid]
 puts [geteuid]
