@@ -138,6 +138,7 @@ proc readreq {chan addr msg} {
 			if {[regexp $reg $url ->]} {
 				set env(QUERY_STRING) $cgiparm
 				set env(DOCUMENT_ROOT) $filepfx($chan)
+				if {[string match -nocase "*POST*" $qtypes($chan)]} {set qtype POST} {set qtype GET}
 				set env(REQUEST_METHOD) $qtypes($chan)
 				set env(REMOTE_ADDR) $addr
 				set env(REDIRECT_STATUS) 1
