@@ -78,9 +78,16 @@ array set postdata {}
 array set filepfx {}
 array set nonl {}
 
-proc readreq {chan addr} {
+proc readrreq {chan addr} {
+	set msg [read $chan]
+	set mssg [split $msg "\n"]
+	foreach {mag} $mssg {
+		readreq $chan $addr [string trim $mag "\r"]
+	}
+}
+
+proc readreq {chan addr msg} {
 	global waiting header env urls qtypes postdata filepfx qvers nonl
-	set msg [string trim [gets $chan] "\r\n"]
 	set qtype [lindex $msg 0]
 	switch -regexp $qtype {
 		"POST" {set qtypes($chan) $qtype;set qvers($chan) [lindex $msg 2];set urls($chan) [lindex $msg 1]}
@@ -181,7 +188,7 @@ proc sacceptconn {chan addr port} {
 
 	set waiting($chan) 1
 	set postdata($chan) ""
-	fileevent $chan readable [list readreq $chan $addr]
+	fileevent $chan readable [list readrreq $chan $addr]
 }
 
 foreach {host port} $::config::main(port) {
