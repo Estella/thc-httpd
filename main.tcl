@@ -106,7 +106,7 @@ proc readreq {chan addr msg} {
 				}
 			}
 		}
-	} 
+	}
 	} else {
 		set filepfx($chan) [dict get $::config::main(root) default]
 	}
@@ -117,6 +117,7 @@ proc readreq {chan addr msg} {
 		incr nonl($chan)
 	}
 	if {[info exists nonl($chan)] && [info exists qtypes($chan)]} {
+		puts stdout "$nonl($chan) $qtypes($chan)"
 		if {$nonl($chan) == 2} {
 			set waiting($chan) 0
 		}
