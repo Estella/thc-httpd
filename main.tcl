@@ -180,7 +180,7 @@ foreach {host port} $::config::main(port) {
 
 if {[info exists ::config::main(sslport)]} {
 	foreach {host port} $::config::main(sslport) {
-		::tls::socket -certfile httpd.pem -server sacceptconn -myaddr $host $port
+		::tls::socket -certfile httpd.pem -server sacceptconn -tls1 1 -ssl2 0 -myaddr $host $port
 	}
 }
 
