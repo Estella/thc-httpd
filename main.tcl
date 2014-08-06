@@ -89,7 +89,7 @@ proc readreq {chan addr} {
 	}
 	#if {"post"==$qtypes($chan) && $qtype != "post" && $qtype != "get"} {append postdata($chan) "$msg\r\n"}
 	if {[info exists qtypes($chan)]} {if {"POST"==$qtypes($chan)} {puts stdout $msg}}
-	if {[info exists qtypes($chan)] && [info exists nonl($chan)]} {if {"POST"==$qtypes($chan) && $nonl($chan) >= 1} {append postdata($chan) $msg;append postdata($chan) "\r\n";puts stdout $msg}}
+	if {[info exists qtypes($chan)] && [info exists nonl($chan)]} {if {"POST"==$qtypes($chan) && $nonl($chan) == 1} {append postdata($chan) $msg;append postdata($chan) "\r\n";puts stdout $msg}}
 	if {[info exists header($chan)]} {
 	foreach {k v} $header($chan) {
 		if {[string tolower $k] == "host"} {
@@ -104,7 +104,7 @@ proc readreq {chan addr} {
 		set filepfx($chan) [dict get $::config::main(root) default]
 	}
 	if {![info exists nonl($chan)] && $msg == "" && [info exists qtypes($chan)]} {
-		set nonl($chan) 0
+		set nonl($chan) 1
 	}
 	if {[info exists nonl($chan)] && $msg == "" && [info exists qtypes($chan)]} {
 		incr nonl($chan)
@@ -146,8 +146,8 @@ proc readreq {chan addr} {
 				unset env(DOCUMENT_ROOT)
 				unset env(REQUEST_METHOD)
 				unset env(REMOTE_ADDR)
-				unset env(CONTENT_LENGTH)
-				unset env(CONTENT_TYPE)
+				if {[dict exists headers($chan) content-length]} unset env(CONTENT_LENGTH)
+				if {[dict exists headers($chan) content-type]} unset env(CONTENT_TYPE)
 				unset env(SCRIPT_FILENAME)
 				unset filepfx($chan)
 				unset qtypes($chan)
