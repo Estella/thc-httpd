@@ -126,7 +126,7 @@ proc readreq {chan addr msg} {
 			set waiting($chan) 0
 		}
 	}
-	if {!$waiting($chan)} {
+	if {!$waiting($chan) && [info exists qtypes($chan)]} {
 		set env(SERVER_SOFTWARE) "tclhttpd/0.1"
 		set url [lindex [split $urls($chan) "?"] 0]
 		set cgiparm [lindex [split $urls($chan) "?"] 1]
