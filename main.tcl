@@ -114,8 +114,8 @@ proc readreq {chan addr} {
 		if {$msg == "" && [info exists qtypes($chan)] && [string tolower $qtypes($chan)] != "post"} {
 			set waiting($chan) 0
 		}
-		if {$nonl($chan) == 2 && [info exists qtypes($chan)]} {
-			if {[string tolower $qtypes($chan)] == "post"} {
+		if {[info exists nonl($chan)] && [info exists qtypes($chan)]} {
+			if {[string tolower $qtypes($chan)] == "post" && $nonl($chan) == 2} {
 				set waiting($chan) 0
 			}
 		}
