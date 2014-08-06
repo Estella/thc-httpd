@@ -82,20 +82,20 @@ proc readreq {chan addr} {
 	global waiting header env urls qtypes postdata filepfx qvers nonl
 	set msg [string trim [gets $chan] "\r\n"]
 	if {[info exists qtypes($chan)] && [info exists nonl($chan)]} {
-		if {[string tolower $qtypes($chan)] == "post" && $nonl($chan) == 1} {
+		if {$qtypes($chan) == "POST" && $nonl($chan) == 1} {
 			puts stdout $msg
 			append postdata($chan) $msg
 			append postdata($chan) "\n"
 		}
 	}
 	set qtype [lindex $msg 0]
-	switch -regexp -nocase $qtype {
-		"post" {set qtypes($chan) $qtype;set qvers($chan) [lindex $msg 2];set urls($chan) [lindex $msg 1]}
-		"get" {set qtypes($chan) $qtype;set qvers($chan) [lindex $msg 2];set urls($chan) [lindex $msg 1]}
+	switch -regexp $qtype {
+		"POST" {set qtypes($chan) $qtype;set qvers($chan) [lindex $msg 2];set urls($chan) [lindex $msg 1]}
+		"GET" {set qtypes($chan) $qtype;set qvers($chan) [lindex $msg 2];set urls($chan) [lindex $msg 1]}
 		".*:" {dict set header($chan) [string tolower [string trim [lindex $msg 0] ":"]] [lindex $msg 1]}
 	}
 	#if {"post"==$qtypes($chan) && $qtype != "post" && $qtype != "get"} {append postdata($chan) "$msg\r\n"}
-	if {[info exists qtypes($chan)]} {if {"post"==[string tolower $qtypes($chan)]} {puts stdout $msg}}
+	if {[info exists qtypes($chan)]} {if {"POST"==$qtypes($chan)} {puts stdout $msg}}
 	if {[info exists header($chan)]} {
 	foreach {k v} $header($chan) {
 		if {[string tolower $k] == "host"} {
@@ -119,7 +119,7 @@ proc readreq {chan addr} {
 		if {$nonl($chan) == 2} {
 			set waiting($chan) 0
 		}
-		if {$nonl($chan) == 1 && !([string tolower $qtypes($chan)] == "post")} {
+		if {$nonl($chan) == 1 && !($qtypes($chan) == "POST")} {
 			set waiting($chan) 0
 		}
 	}
