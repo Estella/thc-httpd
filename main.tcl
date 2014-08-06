@@ -150,7 +150,7 @@ proc readreq {chan addr} {
 		}
 		if {!$iscgi} {
 			puts -nonewline $chan "HTTP/1.1 200 Attempting to send file\r\n"
-			puts -nonewline $chan "Content-Length: [expr {[file size $filepfx($chan)${url}]-1}]\r\n"
+			puts -nonewline $chan "Content-Length: [expr {[file size $filepfx($chan)${url}]}]\r\n"
 			puts -nonewline $chan "Content-Type: [::fileutil::magic::mimetype $filepfx($chan)${url}]\r\n\r\n"
 			sendfile $chan "$filepfx($chan)${url}"
 			close $chan
