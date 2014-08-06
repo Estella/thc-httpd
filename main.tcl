@@ -137,7 +137,7 @@ proc readreq {chan addr} {
 				set env(SCRIPT_FILENAME) "$filepfx($chan)${url}"
 				if {[dict exists headers($chan) cookie]} {set env(HTTP_COOKIE) [dict get headers($chan) cookie]}
 
-				set fromc [open "|$prog $filepfx($chan)${url}" r+]
+				set fromc [open "|$prog $filepfx($chan)${url}"]
 				if {[info exists postdata($chan)]} {puts $fromc $postdata($chan)}
 				puts -nonewline $chan "HTTP/1.1 200 Attempting to send results of script\r\n"
 				sendfromchan $chan $fromc
