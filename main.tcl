@@ -53,7 +53,7 @@ proc sendfile {tochan filename} {
 	set fp [open $filename r]
 	fconfigure $fp -encoding binary
         for {set x 0} {![eof $fp]} {incr x} {
-                puts -nonewline $tochan [read -nonewline $fp]
+                puts -nonewline $tochan [read $fp]
                 flush $tochan
         }
 	close $fp
