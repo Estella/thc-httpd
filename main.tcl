@@ -89,7 +89,7 @@ proc readreq {chan addr} {
 	}
 	#if {"post"==$qtypes($chan) && $qtype != "post" && $qtype != "get"} {append postdata($chan) "$msg\r\n"}
 	if {[info exists qtypes($chan)]} {if {"POST"==$qtypes($chan)} {puts stdout $msg}}
-	if {[info exists qtypes($chan)] && [info exists nonl($chan)]} {if {"POST"==$qtypes($chan) && $nonl($chan) == 2} {append postdata($chan) $msg;append postdata($chan) "\r\n";puts stdout $msg}}
+	if {[info exists qtypes($chan)] && [info exists nonl($chan)]} {if {"POST"==$qtypes($chan) && $nonl($chan) >= 1} {append postdata($chan) $msg;append postdata($chan) "\r\n";puts stdout $msg}}
 	if {[info exists header($chan)]} {
 	foreach {k v} $header($chan) {
 		if {[string tolower $k] == "host"} {
