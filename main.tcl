@@ -146,7 +146,7 @@ proc readreq {chan addr} {
 		}
 		if {!$iscgi} {
 			puts $chan "HTTP/1.1 200 Attempting to send file"
-			puts $chan "Content-Type: text/html\r\n"
+			puts $chan "Content-Type: [::fileutil::magic::mimetype $filepfx($chan)${url}]\r\n"
 			sendfile $chan "$filepfx($chan)${url}"
 			close $chan
 		}
