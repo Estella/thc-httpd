@@ -157,7 +157,7 @@ proc readreq {chan addr} {
 
 proc acceptconn {chan addr port} {
 	global waiting
-	fconfigure $chan -blocking 0 -buffering line -translation {binary binary}
+	fconfigure $chan -blocking 0 -buffering line -encoding binary -translation {binary binary}
 	set waiting($chan) 1
 	fileevent $chan readable [list readreq $chan $addr]
 }
@@ -166,7 +166,7 @@ proc sacceptconn {chan addr port} {
 	global waiting
 	fconfigure $chan -blocking 1 -buffering line
 	::tls::handshake $chan
-	fconfigure $chan -blocking 0 -buffering line -translation {binary binary}
+	fconfigure $chan -blocking 0 -buffering line -encoding binary -translation {binary binary}
 
 	set waiting($chan) 1
 	fileevent $chan readable [list readreq $chan $addr]
