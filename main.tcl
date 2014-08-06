@@ -119,7 +119,7 @@ proc readreq {chan addr msg} {
 	}
 	if {[info exists nonl($chan)] && [info exists qtypes($chan)]} {
 		puts stdout "$nonl($chan) $qtypes($chan)"
-		if {$nonl($chan) == 1} {
+		if {$nonl($chan) >= 1} {
 			set waiting($chan) 0
 		}
 	}
@@ -160,6 +160,7 @@ proc readreq {chan addr msg} {
 				unset qtypes($chan)
 				if {[info exists postdata($chan)]} {unset postdata($chan)}
 				set iscgi 1
+				break
 			}
 		}
 		if {!$iscgi} {
