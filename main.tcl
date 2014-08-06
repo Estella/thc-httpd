@@ -104,8 +104,14 @@ proc readreq {chan addr} {
 	} else {
 		set filepfx($chan) [dict get $::config::main(root) default]
 	}
-	if {([string tolower $qvers($chan)] != "http/1.1" && [string tolower $qtypes($chan)] != "post") || $msg == ""} {
-		set waiting($chan) 0
+	if {[info exists qvers($chan)]} {
+		if {([string tolower $qvers($chan)] != "http/1.1" && [string tolower $qtypes($chan)] != "post") || $msg == ""} {
+			set waiting($chan) 0
+		}
+	} {
+		if {$msg == ""} {
+			set waiting($chan) 0
+		}
 	}
 	if {!$waiting($chan)} {
 		set env(SERVER_SOFTWARE) "tclhttpd/0.1"
