@@ -76,7 +76,6 @@ array set filepfx {}
 proc readreq {chan addr} {
 	global waiting header env urls qtypes postdata filepfx qvers
 	set msg [string trim [gets $chan] "\r\n"]
-	puts stdout $msg
 	if {[info exists qtypes($chan)]} {
 		if {$qtypes($chan) == "post"} {
 			append postdata($chan) $msg
