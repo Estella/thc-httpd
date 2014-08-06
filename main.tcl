@@ -53,7 +53,7 @@ proc sendfile {tochan filename} {
 	set fp [open $filename r]
 	fconfigure $fp -encoding binary
         for {set x 0} {![eof $fp]} {incr x} {
-                puts -nonewline $tochan [read $fp 512]
+                puts -nonewline $tochan [read -nonewline $fp]
                 flush $tochan
         }
 	close $fp
@@ -63,7 +63,7 @@ proc sendfromchan {tochan fromchan} {
 	# Requires fromchan already be open.
 	# closes fromchan.
 	for {set x 0} {![eof $fromchan]} {incr x} {
-		puts -nonewline $tochan [read $fromchan 256]
+		puts -nonewline $tochan [read -nonewline $fromchan]
 		flush $tochan
 	}
 	catch {close $fromchan} zigi
