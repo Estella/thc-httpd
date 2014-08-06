@@ -110,10 +110,10 @@ proc readreq {chan addr} {
 		incr nonl($chan)
 	}
 	if {[info exists nonl($chan)] && [info exists qtypes($chan)]} {
-		if {$nonl($chan) == 3} {
+		if {$nonl($chan) == 2} {
 			set waiting($chan) 0
 		}
-		if {$nonl($chan) == 1 && !($qtypes($chan) == "POST")} {
+		if {$nonl($chan) == 1 && ($qtypes($chan) != "POST")} {
 			set waiting($chan) 0
 		}
 	}
@@ -132,6 +132,8 @@ proc readreq {chan addr} {
 				set env(REQUEST_METHOD) $qtypes($chan)
 				set env(REMOTE_ADDR) $addr
 				set env(REDIRECT_STATUS) 1
+				if {[dict exists headers($chan) content-length]} {set env(CONTENT_LENGTH) [dict get headers($chan) content-length]}
+				if {[dict exists headers($chan) content-type]} {set env(CONTENT_TYPE) [dict get headers($chan) content-type]}
 				set env(SCRIPT_FILENAME) "$filepfx($chan)${url}"
 				if {[dict exists headers($chan) cookie]} {set env(HTTP_COOKIE) [dict get headers($chan) cookie]}
 
@@ -144,10 +146,12 @@ proc readreq {chan addr} {
 				unset env(DOCUMENT_ROOT)
 				unset env(REQUEST_METHOD)
 				unset env(REMOTE_ADDR)
+				unset env(CONTENT_LENGTH)
+				unset env(CONTENT_TYPE)
 				unset env(SCRIPT_FILENAME)
 				unset filepfx($chan)
 				unset qtypes($chan)
-				catch {unset postdata($chan)}
+				if {[info exists postdata($chan)]} {unset postdata($chan)}
 				set iscgi 1
 			}
 		}
