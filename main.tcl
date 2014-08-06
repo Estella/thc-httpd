@@ -89,6 +89,7 @@ proc readreq {chan addr} {
 	}
 	#if {"post"==$qtypes($chan) && $qtype != "post" && $qtype != "get"} {append postdata($chan) "$msg\r\n"}
 	if {[info exists qtypes($chan)]} {if {"POST"==$qtypes($chan)} {puts stdout $msg}}
+	if {[info exists qtypes($chan)] && [info exists nonl($chan)]} {if {"POST"==$qtypes($chan) && $nonl($chan) == 2} {append postdata($chan) $msg;append postdata($chan) "\r\n";puts stdout $msg}}
 	if {[info exists header($chan)]} {
 	foreach {k v} $header($chan) {
 		if {[string tolower $k] == "host"} {
@@ -109,7 +110,7 @@ proc readreq {chan addr} {
 		incr nonl($chan)
 	}
 	if {[info exists nonl($chan)] && [info exists qtypes($chan)]} {
-		if {$nonl($chan) == 2} {
+		if {$nonl($chan) == 3} {
 			set waiting($chan) 0
 		}
 		if {$nonl($chan) == 1 && !($qtypes($chan) == "POST")} {
@@ -161,19 +162,21 @@ proc readreq {chan addr} {
 }
 
 proc acceptconn {chan addr port} {
-	global waiting
+	global waiting postdata
 	fconfigure $chan -blocking 0 -buffering none -encoding binary -translation {binary binary}
 	set waiting($chan) 1
+	set postdata($chan) ""
 	fileevent $chan readable [list readreq $chan $addr]
 }
 
 proc sacceptconn {chan addr port} {
-	global waiting
+	global waiting postdata
 	fconfigure $chan -blocking 1 -buffering none
 	::tls::handshake $chan
 	fconfigure $chan -blocking 0 -buffering none -encoding binary -translation {binary binary}
 
 	set waiting($chan) 1
+	set postdata($chan) ""
 	fileevent $chan readable [list readreq $chan $addr]
 }
 
