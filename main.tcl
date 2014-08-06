@@ -119,10 +119,7 @@ proc readreq {chan addr msg} {
 	}
 	if {[info exists nonl($chan)] && [info exists qtypes($chan)]} {
 		puts stdout "$nonl($chan) $qtypes($chan)"
-		if {$nonl($chan) == 2} {
-			set waiting($chan) 0
-		}
-		if {$nonl($chan) == 1 && ![string match -nocase "*POST*" $qtypes($chan)]} {
+		if {$nonl($chan) == 1} {
 			set waiting($chan) 0
 		}
 	}
